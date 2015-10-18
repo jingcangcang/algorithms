@@ -1,0 +1,125 @@
+package test;
+
+import java.util.Random;
+import java.util.Scanner;
+
+public class MergeSort {
+	private static int[] array;
+	private static int[] array1;
+	public void mergeSort(int low,int high){
+		if(low<high){
+			int mid=(low+high)/2;
+			mergeSort(low,mid);
+			mergeSort(mid+1,high);
+			merge(low,mid,high);
+		}
+	}
+	
+	public void merge(int low,int mid,int high){
+		int i=mid+1;
+		int j=0;
+		int m=low;
+		int[] temp=new int[high-low+1];
+		while(m<=mid&&i<=high){
+			if(array[m]<array[i]){
+				temp[j++]=array[m];
+				m++;
+			}else{
+				temp[j++]=array[i];
+				i++;
+			}
+		}
+		
+		if(m>mid){//第一个数组元素被取尽
+			for(int k=i;k<=high;k++){
+				temp[j++]=array[k];
+			}
+		}
+		
+		if(i>high){//第二个数组元素被取尽
+			for(int k=m;k<=mid;k++){
+				temp[j++]=array[k];
+			}
+		}
+		
+		for(int k=low;k<=high;k++){
+			array[k]=temp[k-low];
+		}
+	}
+	
+	public void quickSort(int low,int high){
+		
+		if(low<high){
+			int q=partition(low,high);
+			quickSort(low,q-1);
+			quickSort(q+1,high);
+		}
+	}
+	
+	public int partition(int low,int high){
+		int i=low-1;
+		int temp=array1[high];
+		int m;
+		
+		for(int k=low;k<high;k++){
+			if(array1[k]<=temp){
+				i++;
+				m=array1[i];
+				array1[i]=array1[k];
+				array1[k]=m;
+			}		
+		}
+		
+		m=array1[i+1];
+		array1[i+1]=temp;
+		array1[high]=m;
+		
+		
+		return i+1;
+		
+	}
+	
+	public static void main(String[] args){
+		//初始化数组
+		Scanner scan=new Scanner(System.in);
+		int len=scan.nextInt();
+		array=new int[len];	
+		array1=new int[len];	
+		
+		Random rand=new Random(len);
+		for(int i=0;i<len;i++){
+			array[i]=rand.nextInt()%len;
+			array1[i]=array[i];
+			//System.out.print(array[i]+" ");
+		}
+		System.out.println();
+		
+		
+		MergeSort merge=new MergeSort();
+		
+		//归并排序
+		long start1=System.currentTimeMillis();
+		merge.mergeSort(0,len-1);
+		long end1=System.currentTimeMillis();
+		System.out.println("the time of the merge sort:"+(end1-start1));
+		
+		//快速排序
+		long start2=System.currentTimeMillis();
+		merge.quickSort(0, len-1);
+		long end2=System.currentTimeMillis();
+		System.out.println("the time of the quick sort:"+(end2-start2));
+		
+	/*	for(int i=0;i<len;i++){
+			System.out.print(array[i]+" ");
+			
+		}
+		System.out.println();
+		for(int i=0;i<len;i++){
+			
+			System.out.print(array1[i]+" ");
+		}
+		
+		*/
+	}
+	
+}
