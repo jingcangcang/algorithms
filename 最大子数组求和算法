@@ -3,7 +3,7 @@ package test;
 
 public class MaxSubarray {
 	private int[] array={13,-3,-25,20,-3,-16,-23,18,20,-7,12,-5,-22,15,-4,7};;
-	private int max(int low,int high){
+	private int max(int low,int high){//分治方法 o(logn)
 		if(low==high)
 			return array[low];
 		
@@ -34,11 +34,35 @@ public class MaxSubarray {
 		return max>rightMax?max:rightMax;		
 	}
 
+	  public int maxSubArray(int[] nums) {
+		   int min,result=nums[0];
+			        min=0<nums[0]?0:nums[0];
+			        for(int i=1;i<nums.length;i++){
+			        	nums[i]+=nums[i-1];	        	
+			        	result=Math.max(nums[i]-min, result);
+			        	min=Math.min(nums[i],min);	        	
+			        }	        
+			        return result;
+		    }
+	  
+	  public int sub(int[] A){//o(n)
+		  int maxSoFar=A[0];//到目前位置最大的和
+		  int maxEndingHere=A[0];//加上当前元素的最大和
+		    for (int i=1;i<A.length;++i){
+		        maxEndingHere= Math.max(maxEndingHere+A[i],A[i]);
+		        maxSoFar=Math.max(maxSoFar, maxEndingHere); 
+		    }
+		    return maxSoFar;
+	  }
+	
 	public static void main(String[] args){
 		
 		
 		MaxSubarray test=new MaxSubarray();
 		System.out.println(test.max(0, test.array.length-1));
+		System.out.println(test.sub(test.array));
+		System.out.println(test.maxSubArray(test.array));
 		
 	}
 }
+
