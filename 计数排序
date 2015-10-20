@@ -1,0 +1,31 @@
+package test;
+//计数排序O(n),只适用于0-max这样的数组
+public class Counting {
+	public static void count(int[] array,int max){
+		int len=array.length;
+		int[] b=new int[len];//排好序的数组
+		int[] number=new int[max+1];//数组最大的元素为max，存放的是小于等于当前下标的个数
+		
+		for(int i=0;i<len;i++){
+			number[array[i]]++;
+		}
+		
+		for(int i=1;i<=max;i++){
+			number[i]+=number[i-1];//现在存储的是小于等于当前下标i的个数
+		}
+		
+		for(int i=len-1;i>=0;i--){
+			b[number[array[i]]-1]=array[i];
+			number[array[i]]--;
+		}
+		
+		for(int i=0;i<len;i++)
+			System.out.print(b[i]+" ");
+	}
+	
+	public static void main(String[] args){
+		int[] array={3,6,8,7,6,9,2,4};
+		count(array,9);
+	}
+	
+}
