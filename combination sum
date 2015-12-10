@@ -1,0 +1,48 @@
+package test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+public class Test {
+	List<List<Integer>> result=new ArrayList<List<Integer>>(); 
+	
+	public List<List<Integer>> combinationSum(int[] candidates, int target) {     
+       List<Integer> list1=new ArrayList<Integer>();
+		int length=candidates.length;
+		Arrays.sort(candidates);//sort array
+        if(length==0||target<candidates[0])//can't find any candidate
+        	return result;
+        
+        
+        combination(candidates,list1,target,0);
+        return result;
+    }
+	
+	public void combination(int[] candidates,List<Integer> list,int num,int start){//在函数之间传递值时所需要注意的，就是要继承函数传来的，新建一个变量，然后传参时也使用新的变量
+		int len=candidates.length;
+		if(num==0){
+			Collections.sort(list);
+			if(!result.contains(list))
+				result.add(list);
+			return;
+		}	
+		for(int i=start;i<len&&num>=candidates[i];i++){
+			List<Integer> list1=new ArrayList<Integer>();
+			list1.add(candidates[i]);
+			list1.addAll(list);
+			combination(candidates,list1,num-candidates[i],i);
+			
+		}
+		
+	}
+	
+	public static void main(String[] args){
+		Test test=new Test();
+		int[] candidates={7,3,9,6};
+		int target=6;
+		
+		System.out.print(test.combinationSum(candidates,target));
+	}
+}
