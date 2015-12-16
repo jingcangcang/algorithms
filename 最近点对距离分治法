@@ -1,0 +1,116 @@
+package test;
+/*
+ * 求解一维/二维最近点对距离的分治算法
+ */
+public class OnePair {
+	//求解一维最近点对距离的分治算法
+	public int dis(int[] S,int low,int high){
+		int distance=100;
+		int len=high-low;
+		
+		if(len<2)
+			return distance;
+		
+		int i;
+		int ave=0;
+		for(i=0;i<len;i++)
+			ave+=S[i];
+		ave/=len;
+		
+		int[] S1=new int[len];
+		int[] S2=new int[len];
+		int count1=0,count2=0;
+		int max_1=0,min_2=100;
+		for(i=0;i<len;i++){
+			if(S[i]<=ave){
+				S1[count1++]=S[i];
+				if(S[i]>max_1)
+					max_1=S[i];
+			}
+			else{
+				S2[count2++]=S[i];
+				if(S[i]<min_2)
+					min_2=S[i];
+			}
+		} 
+		
+		int d1=dis(S1,0,count1);
+		int d2=dis(S2,0,count2);
+		distance=(d1<d2)?d1:d2;
+		distance=(distance<(min_2-max_1))?distance:(min_2-max_1);
+		
+		return distance;
+	}
+	
+	//求2维最近点对距离和坐标
+	public double dis2(double[][] S,int low,int high){
+		double distance=1000;
+		int len=high-low;
+		
+		if(len<2)
+			return distance;
+		
+		int i;
+		double avg_x=0;
+		for(i=0;i<len;i++){
+			avg_x+=S[i][0];
+		}
+		avg_x/=len;
+		
+		//划分成2个集合
+		double[][] S1=new double[len][2];
+		double[][] S2=new double[len][2];
+		int count1=0,count2=0;
+		for(i=0;i<len;i++){
+			if(S[i][0]<=avg_x){
+				S1[count1++]=S[i];				
+			}else
+				S2[count2++]=S[i];
+		}
+		double d1=dis2(S1,0,count1);
+		double d2=dis2(S2,0,count2);
+		distance=d1>d2?d2:d1;
+		
+		//检查一个点在S1,另一个点在S2时的最短距离
+		double[][] p1=new double[count1][2];
+		double[][] p2=new double[count2][2];
+		int count3=0,count4=0;
+		for(i=0;i<count1;i++){
+			if(avg_x-distance<=S1[i][0])
+				p1[count3++]=S1[i];
+		}
+		
+		for(i=0;i<count2;i++){
+			if(S2[i][0]<=distance+avg_x)
+				p2[count4++]=S2[i];
+		}
+		
+		double d=distance;
+		double temp;
+		boolean flag;
+		for(i=0;i<count3;i++){//遍历p1数组
+			for(int j=0;j<count4;j++){//遍历p2数组
+				flag=p2[j][1]>=p1[i][1]&&(p2[j][1]-p1[i][1])<=d;
+				flag=flag||(p2[j][1]<=p1[i][1]&&(p1[j][1]-p2[i][1])<=d);
+				if(flag){
+					temp=Math.sqrt(Math.pow(p2[j][0]-p1[i][0], 2)+Math.pow(p2[j][1]-p1[i][1], 2));
+					if(d>temp)
+						distance=temp;
+				}
+		
+			}
+		}
+		
+		return distance;
+	}
+	
+	public static void main(String[] args){
+		OnePair test=new OnePair();
+		//int[] S={1,4,8,15,30,56};
+		//System.out.println(test.dis(S,0,S.length));
+		
+		double[][] S={{24.11,33.1},{11.33,15.66},{24.18,5.42},{14.62,50.11},{14.99,50.57},{33.95,43.44}};
+		System.out.println(test.dis2(S,0,S.length));
+	}
+	
+}
