@@ -1,0 +1,96 @@
+package test;
+
+public class Kthmin {
+	int r=5;//正整数，表明划分后每组的元素，当数组元素小于r时，直接使用快排得到第k小的元素。
+	
+	public void quickSort(int[] array1,int low,int high){
+		
+		if(low<high){
+			int q=partition(array1,low,high);
+			quickSort(array1,low,q-1);
+			quickSort(array1,q+1,high);
+		}
+	}
+	
+	public int partition(int[] array1,int low,int high){
+		int i=low-1;
+		int temp=array1[high];
+		int m;
+		
+		for(int k=low;k<high;k++){
+			if(array1[k]<=temp){
+				i++;
+				m=array1[i];
+				array1[i]=array1[k];
+				array1[k]=m;
+			}		
+		}
+		
+		m=array1[i+1];
+		array1[i+1]=temp;
+		array1[high]=m;
+		
+		
+		return i+1;
+		
+	}
+
+	
+	//返回一个i值，使得A[i]是A[m..p]中第k小的元素
+	public int select(int[] A, int m,int p,int k){
+		int number=p-m+1;
+		int result=0;
+		//当数组元素小于r时，直接使用快排得到第k小的元素。
+		if(number<=r){
+			quickSort(A,m,p);
+			return A[m+k-1];//可能出现m=k=0的情况，此时可能出现数组访问越界
+		}
+		
+		int q=number/r;
+		int[] M=new int[q];//存储每个分组中的中位数
+		int i;
+		for(i=0;i<q;i++){
+			quickSort(A,m+i*r,m+i*r+r-1);
+			M[i]=A[m+i*r+r/2];
+		}
+		int mm;
+		if(q==1)
+			mm=M[0];
+		else
+			mm=select(M,0,q-1,(int)Math.floor(q/2));//返回分组后的中位数构成的中位数
+		
+		int[] A1=new int[p-m+1];//存储小于mm的值
+		int[] A2=new int[p-m+1];//存储等于mm的值
+		int[] A3=new int[p-m+1];//存储大于mm的值	
+		int count1=0,count2=0,count3=0;
+		for(i=m;i<=p;i++){
+			if(A[i]<mm)
+				A1[count1++]=A[i];
+			else if(A[i]==mm)
+				A2[count2++]=A[i];
+			else
+				A3[count3++]=A[i];
+		}
+		
+		if(count1>=k)
+			result=select(A1,0,count1-1,k);
+		else if(count2+count1>=k)
+			result=mm;
+		else if(count1+count2<k)
+			result=select(A3,0,count3-1,k-count1-count2);
+		
+		return result;
+	}
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Kthmin test=new Kthmin();
+		int a[] = {8, 33, 17, 51, 57, 49, 35, 11, 25, 37, 14, 3, 2, 13, 52, 12, 6, 29, 32, 54, 5, 16, 22, 23, 7}; 
+		test.quickSort(a,0,a.length-1);
+		System.out.print(a[22]+" ");
+		
+		int a1[] = {8, 33, 17, 51, 57, 49, 35, 11, 25, 37, 14, 3, 2, 13, 52, 12, 6, 29, 32, 54, 5, 16, 22, 23, 7}; 
+		System.out.print(test.select(a1, 0, a1.length-1,23));
+	}
+
+}
