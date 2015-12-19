@@ -1,0 +1,72 @@
+package test;
+/*
+ * 利用prim算法生成最小生成树,每一步生成的都是图的子树
+ */
+public class Prim {
+	public void primTree(int[][] cost){
+		int minCost=0;//最小生成树的权值和
+		int number=cost.length;
+		int[] near=new int[number];//记录未加入的点到已加入的点中最短距离的点，已访问的设为-1；因为此代码中结点从0开始编号
+		int[][] t=new int[number-1][2];//依次存储加入的边的结点
+		
+		int i,j;
+		//找到图中权值最小的一条边
+		int min=1000;
+		for(i=0;i<number;i++){
+			for(j=0;j<number;j++){
+				if(cost[i][j]<min){
+					min=cost[i][j];
+					t[0][0]=i;
+					t[0][1]=j;
+				}
+			}
+		}
+		minCost+=min;
+		
+		//更新每个点是到t[0][0]近，还是到t[0][1]近
+		for(i=0;i<number;i++){
+			if(cost[i][t[0][0]]>cost[i][t[0][1]]){
+				near[i]=t[0][1];
+			}
+			else
+				near[i]=t[0][0];
+		}
+		near[t[0][0]]=-1;
+		near[t[0][1]]=-1;
+
+		//寻找另外的n-2条边
+		for(i=1;i<number-1;i++){
+			min=1000;
+			for(j=0;j<number;j++){
+				if(near[j]!=-1&&cost[near[j]][j]<min){
+					min=cost[near[j]][j];
+					t[i][0]=near[j];
+					t[i][1]=j;
+				}
+			}
+			near[t[i][1]]=-1;//加入边t[i][1]
+			minCost+=min;
+			
+			//加如新点后，更新near数组，得到未加入的点到已加入的点中最小权值的点
+			for(j=0;j<number;j++){
+				if(near[j]!=-1&&cost[j][near[j]]>cost[j][t[i][1]])
+					near[j]=t[i][1];
+			}
+		}
+		if(minCost>=6000)
+			System.out.println("no spanning ttree!");
+		else{
+			System.out.println("the cost is :"+minCost);
+			for(i=0;i<number-1;i++){
+				System.out.println(t[i][0]+"->"+t[i][1]);
+			}
+		}
+		
+	}
+	
+	public static void main(String[] args){
+		int[][] cost={{1000,10,1000,30,45,1000},{10,1000,50,1000,40,25},{1000,50,1000,1000,35,15},{30,1000,1000,1000,1000,20},{45,40,35,1000,1000,55},{1000,25,15,20,55,10000}};
+		Prim  test=new Prim ();
+		test.primTree(cost);
+	}
+}
