@@ -1,0 +1,64 @@
+package test;
+/*
+ * 实现了dijkstra最短路径算法，也就是解决单点源最短路径问题
+ */
+public class Dijkstra {
+	public void dijkstraPath(int[][] cost,int[] dist,int[] parent,int[] s,int v){
+		//初始化结点信息
+		int i;
+		int num=dist.length;
+		for(i=0;i<num;i++){
+			s[i]=0;
+			parent[i]=v;
+			dist[i]=cost[v][i];
+		}
+		
+		//初始化第一个结点
+		s[v]=1;
+		dist[v]=0;
+		parent[v]=-1;
+		
+		int j,k;
+		int min=100;
+		int flag=0;
+		for(i=0;i<num-1;i++){//确定由v出发的n-1条最短路径
+			min=100;
+			for(j=0;j<num;j++){//从未被访问的结点中寻找离已访问的结点最近的点
+				if(s[j]==0&&dist[j]<min){
+					flag=j;
+					min=dist[j];
+				}					
+			}
+			
+			s[flag]=1;//将结点j加入
+			
+			for(k=0;k<num;k++){//将v经过flag点到达其它点的距离与之前的最短距离的相比，保留距离短的，依此来修改dist数组
+				if(s[k]==0&&dist[k]>dist[flag]+cost[flag][k]){
+					dist[k]=dist[flag]+cost[flag][k];
+					parent[k]=flag;
+				}
+			}	
+		}
+		
+		for(i=0;i<num;i++){
+			System.out.println(dist[i]+" "+parent[i]);
+		}
+	}
+	
+	public void init(){
+		//图的邻接矩阵
+		int[][] cost={{0,50,10,100,45,100},{100,100,15,100,10,100},{20,100,100,15,100,100},{100,20,100,100,35,100},{100,100,100,30,100,100},{100,100,100,30,100,100}};
+		int[] s=new int[6];//等于1表示加入最短路径集合，等于0表示没有加入
+		int[] dist=new int[6];//表示节点v到各点的最短路径之长度
+		int[] parent=new int[6];//各顶点在最短路径上的前继
+		int v=0;//表示求第v个结点的单点源最短路径
+		
+		dijkstraPath(cost,dist,parent,s,v);
+		
+		
+	}
+	public static void main(String[] args){
+		 Dijkstra test=new Dijkstra();
+		 test.init();
+	}
+}
