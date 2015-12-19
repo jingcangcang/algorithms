@@ -1,0 +1,88 @@
+package test;
+/*
+ * 实现最小生成树通过kruskal方法
+ */
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.PriorityQueue;
+
+public class Kruskal {
+	public void kruskalTree(int[][] cost){
+		int minCost=0; //最小生成树的权重和
+		int number=cost.length;
+		int i,j;
+		
+		PriorityQueue<Edge> queue=generatePriority(cost);
+		
+		int[][] tree=new int[number-1][2];
+		HashMap<Integer,HashSet<Integer>> map=new HashMap<Integer,HashSet<Integer>>();
+		int flag=0;
+		while(!queue.isEmpty()){//迭代次数为边的条数
+			Edge e=queue.poll();
+			
+			HashSet<Integer> setU=map.get(e.u);
+			HashSet<Integer> setV=map.get(e.v);
+			
+			//判断这2个集合是否有交集
+			if(setU==null&&setV==null){//这两个点都没有加入到最优树中
+				HashSet<Integer> set=new HashSet<Integer>();
+				set.add(e.u);
+				set.add(e.v);
+				map.put(e.u,set);
+				map.put(e.v,set);
+			}else if(setU==null&&setV!=null){//一个结点加入了最优树中，一个没有
+				
+				setV.add(e.u);
+				for(int v1:setV){
+					map.put(v1, setV);
+				}
+			}else if(setU!=null&&setV==null){
+				setU.add(e.v);
+				for(int v1:setU){
+					map.put(v1, setU);
+				}
+			}else if(setU!=setV){
+					setU.addAll(setV);
+					for(int v1:setU){
+						map.put(v1, setU);
+					}					
+			}else{
+				continue;
+			}
+			
+			
+			tree[flag][0]=e.u;
+			tree[flag][1]=e.v;
+			minCost+=e.weight;
+			flag++;
+			
+		}
+		if(flag!=number-1)
+			System.out.println("the graph is not connect");
+		System.out.println("the cost is:"+minCost);
+		for(j=0;j<number-1;j++){
+			System.out.println(tree[j][0]+"->"+tree[j][1]);
+		}
+				
+	}
+	//按图边的长度排序
+	public PriorityQueue<Edge> generatePriority(int[][] cost){
+		PriorityQueue<Edge> queue=new PriorityQueue<Edge>();
+		int number=cost.length;
+		int i,j;
+		int maxNum=1000;
+		for(i=0;i<number;i++){
+			for(j=i+1;j<number;j++){
+				if(cost[i][j]<maxNum)
+					queue.add(new Edge(i,j,cost[i][j]));
+			}
+		}
+		return queue;
+	}
+
+	public static void main(String[] args){
+		int[][] cost={{1000,10,1000,30,45,1000},{10,1000,50,1000,40,25},{1000,50,1000,1000,35,15},{30,1000,1000,1000,1000,20},{45,40,35,1000,1000,55},{1000,25,15,20,55,10000}};
+		Kruskal  test=new Kruskal();
+		test.kruskalTree(cost);
+	}
+}
