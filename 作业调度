@@ -1,0 +1,75 @@
+package test;
+
+import java.util.PriorityQueue;
+
+/*
+ * 实现带期限作业调度问题的贪心算法
+ */
+public class GreedyJob {
+	public void  greedyJob(int[] d,int[] p ){
+		PriorityQueue<Node> temp=initial(p);
+		int i,k=0,t;
+		int number=d.length;
+		int[] j=new int[number];
+		j[0]=temp.poll().number;
+		while(!temp.isEmpty()){
+			i=k;
+			Node node=temp.poll();
+			//按p的非增次序考虑作业，检查作业是否可插入，并找出插入位置
+			while(i>=0&&d[j[i]]>d[node.number]&&d[j[i]]>(i+1))
+				i--;
+			
+			if(i==-1||(d[j[i]]<=d[node.number]&&d[node.number]>i+1)){//将插入位置以后的元素全部后移，将待插入元素插入待插入点后面
+				for(t=k;t>i;t--){
+					j[t+1]=j[t];
+				}
+				j[i+1]=node.number;
+				k++;
+			}
+		}
+		
+		for(i=0;i<number;i++)
+			System.out.println(j[i]+":"+d[j[i]]);
+		
+	}
+	
+	//依据作业的效益从大到小重新对作业进行排序，temp数组则保存作业编号以及其对应的期限，作业编号根据效益值排序得到
+	public PriorityQueue<Node> initial(int[] p){//d表示作业对应的期限值，p表示作业对应的效益
+		PriorityQueue<Node> queue=new PriorityQueue<Node>();
+		int i;
+		int number=p.length;
+		for(i=0;i<number;i++){
+			queue.add(new Node(i,p[i]));
+		}
+		return queue;
+	}
+	
+	public static void main(String[] args){
+		int[] d={4,2,4,3,4,8,3};
+		int[] p={35,30,25,20,15,10,5};
+		
+		GreedyJob test=new GreedyJob();
+		test.greedyJob(d, p);
+		
+	}
+}
+class Node implements Comparable<Node>{
+	int number;
+	int value;
+	
+	public Node(int number,int value){
+		this.number=number;
+		this.value=value;
+	}
+	
+	@Override
+	public int compareTo(Node e){
+		if(e.value==value)
+			return 0;
+		else if(value>e.value)
+			return -1;
+		else
+			return 1;
+	}
+	
+}
